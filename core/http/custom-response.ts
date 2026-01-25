@@ -1,7 +1,7 @@
 import { ServerResponse } from "node:http";
 
 export interface CustomResponse extends ServerResponse{
-    status(code:number):ServerResponse;
+    status(code:number):CustomResponse;
     json(data:any):void
 }
 
