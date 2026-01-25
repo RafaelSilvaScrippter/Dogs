@@ -1,9 +1,16 @@
 
+import { readFile } from "node:fs/promises";
 import { ApiPosts } from "./api/posts/index.ts";
 import { Core } from "./core/core.ts";
 
 const core  = new Core()
 
 new ApiPosts(core).init()
+
+
+core.router.get('/',async (req,res) =>{
+    const file = await readFile('./front/index.html','utf-8')
+    res.end(file)
+})
 
 core.init()
