@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/node": "^25.0.10"
+  },
+  "type": "module"
+}
