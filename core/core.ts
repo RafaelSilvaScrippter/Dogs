@@ -2,14 +2,17 @@ import { createServer, type IncomingMessage,  type Server, type ServerResponse }
 import { Router } from "./router.ts";
 import { customRequest } from "./http/custom-request.ts";
 import { customResponse } from "./http/custom-response.ts";
+import { DataBase } from "./database.ts";
 
 export class Core{
     router:Router;
     server:Server;
+    db:DataBase;
 
     constructor(){
         this.router = new Router()
         this.server = createServer(this.handler)
+        this.db = new DataBase('./dogs.sqlite')
     }
 
     handler = async (request:IncomingMessage,response:ServerResponse) =>{

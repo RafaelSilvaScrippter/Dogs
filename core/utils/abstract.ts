@@ -4,9 +4,11 @@ import type{ Handler } from "../router.ts";
 export abstract class CoreProvider {
     core:Core;
     router:Core['router'];
+    db:Core['db']
     constructor(core:Core){
         this.core = core
         this.router = core.router
+        this.db = core.db
     }
 }
 
