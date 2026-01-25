@@ -1,5 +1,6 @@
 import { createServer, type IncomingMessage,  type Server, type ServerResponse } from "node:http";
 import { Router } from "./router.ts";
+import { customRequest } from "./http/custom-request.ts";
 
 export class Core{
     router:Router;
@@ -11,8 +12,8 @@ export class Core{
     }
 
     handler = async (request:IncomingMessage,response:ServerResponse) =>{
-        const url = new URL(request.url || '','http://localhost')
-        const handler = this.router.find(request.method || '',url.pathname)
+        const req = await customRequest(request)
+        const handler = this.router.find(req.method || '',req.pathname)
         
         if(handler){
             handler(request,response)
