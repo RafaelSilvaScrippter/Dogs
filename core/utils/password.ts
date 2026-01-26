@@ -26,7 +26,7 @@ export class Password{
 }
 
     async hashHmac(password:string,password_hash:string){
-
+        
         const { stored_salt, stored_dk } = this.parsePasswordHash(password_hash);
 
         const password_normalized = password.normalize("NFC");
