@@ -23,3 +23,10 @@ export function queryPostUser({user_name,email,password_hash}:userData){
         VALUES (?,?,?)
     `).run(user_name,email,password_hash)
 }
+
+export function queryGetLogin({user_name,email,password_hash}:userData){
+    return db.prepare(/*SQL */ `
+        SELECT "password_hash" FROM "users" WHERE "user_name" = ? OR "email" = ?
+    `)
+    .get(user_name,email) as userData | undefined
+}
