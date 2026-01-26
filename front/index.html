@@ -8,4 +8,21 @@
 <body>
 <h1>Dogs</h1>
 </body>
+
+<script>
+    async function loginUser(){
+
+        const response = await fetch('http://localhost:3000/auth/create',{
+            method:'POST',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({username:'theKiddie',email:'rafael',password:"rafael"})
+        })
+        const dados = await response.json()
+        console.log(dados)
+    }
+
+    loginUser()
+</script>
 </html>
