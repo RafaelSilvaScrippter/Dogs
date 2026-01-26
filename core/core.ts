@@ -3,6 +3,7 @@ import { Router } from "./router.ts";
 import { customRequest } from "./http/custom-request.ts";
 import { customResponse } from "./http/custom-response.ts";
 import { DataBase } from "./database.ts";
+import { RouterError } from "./utils/router-error.ts";
 
 export class Core{
     router:Router;
@@ -19,12 +20,19 @@ export class Core{
         const req = await customRequest(request)
         const res = customResponse(response)
         const handler = this.router.find(req.method || '',req.pathname)
+        try{
+
         
         if(handler){
             handler(req,res)
         }else{
             console.log('nenhuma rota encontrada')
         }
+        }catch(err){
+        if(err instanceof RouterError){
+            res.status(500).json({message:err.message})
+        }
+    }
     }
 
     init(){
