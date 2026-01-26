@@ -11,7 +11,14 @@ const db = new Core().db.db
 
 type userData = Omit<UserData, 'id'>
 
+interface UserSession  {
+    id:number;
+    ip:string;
+    session_hash:string;
+    revoked?:number;
+}
 
+type userSession = Omit<UserSession, "id">
 
 export function queryPostUser({user_name,email,password_hash}:userData){
     console.log(user_name,email,password_hash)
@@ -29,4 +36,17 @@ export function queryGetLogin({user_name,email,password_hash}:userData){
         SELECT "password_hash" FROM "users" WHERE "user_name" = ? OR "email" = ?
     `)
     .get(user_name,email) as userData | undefined
+}
+ 
+export function insertQuery({ip,session_hash}:userSession){
+    return db.prepare(/*SQL */ `
+    
+        INSERT OR IGNORE INTO "session" (
+            "ip",
+            "session_hash",
+        )
+
+        VALUES (?,?)
+        
+    `).run(ip,session_hash)
 }
