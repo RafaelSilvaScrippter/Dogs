@@ -2,7 +2,7 @@ import { logger } from "../../core/middleware/logger.ts";
 import { Api } from "../../core/utils/abstract.ts";
 import { hashHmac, passwordHash } from "../../core/utils/password.ts";
 import { RouterError } from "../../core/utils/router-error.ts";
-import { queryGetLogin, queryPostUser } from "./query.ts";
+import { queryGetLogin, queryPostUser, selectSession } from "./query.ts";
 import { sessions } from "./session/service.ts";
 import { tableAuth } from "./tables.ts";
 
@@ -39,6 +39,17 @@ export class AuthApi extends Api{
             }
 
             res.status(200).json({message:'usuário autenticado'})
+        },
+        getSession:(req,res) =>{
+            const cookie = req.headers['cookie'];
+            const match = cookie?.match(/__Secure_sid=([^;\s]+)/);
+            const session_hash = match ? match[1] : null;
+        
+
+             const sessionUser = selectSession({session_hash})
+            console.log(sessionUser)
+            
+            console.log(session_hash);
         }
 
     }satisfies Api['handlers']
@@ -50,5 +61,6 @@ export class AuthApi extends Api{
     routes(): void {
         this.router.post('/auth/create',this.handlers.postUser)
         this.router.post('/auth/login',this.handlers.postLogin,[logger])
+        this.router.get('/auth/session',this.handlers.getSession)
     }
 }
