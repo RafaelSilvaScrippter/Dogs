@@ -18,8 +18,6 @@ interface UserSession  {
     revoked?:number;
 }
 
-type userSession = Omit<UserSession, "id">
-
 export function queryPostUser({user_name,email,password_hash}:userData){
     console.log(user_name,email,password_hash)
     return db.prepare(/*SQL */`INSERT OR IGNORE INTO "users" (
@@ -38,15 +36,16 @@ export function queryGetLogin({user_name,email,password_hash}:userData){
     .get(user_name,email) as userData | undefined
 }
  
-export function insertQuery({ip,session_hash}:userSession){
+export function insertQuery({id,ip,session_hash}:UserSession){
     return db.prepare(/*SQL */ `
     
         INSERT OR IGNORE INTO "session" (
+            "id",
             "ip",
-            "session_hash",
+            "session_hash"
         )
 
-        VALUES (?,?)
+        VALUES (?,?,?)
         
-    `).run(ip,session_hash)
+    `).run(id,ip,session_hash)
 }
