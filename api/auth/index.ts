@@ -1,3 +1,4 @@
+import { logger } from "../../core/middleware/logger.ts";
 import { Api } from "../../core/utils/abstract.ts";
 import { hashHmac, passwordHash } from "../../core/utils/password.ts";
 import { RouterError } from "../../core/utils/router-error.ts";
@@ -42,6 +43,6 @@ export class AuthApi extends Api{
 
     routes(): void {
         this.router.post('/auth/create',this.handlers.postUser)
-        this.router.post('/auth/login',this.handlers.postLogin)
+        this.router.post('/auth/login',this.handlers.postLogin,[logger])
     }
 }
