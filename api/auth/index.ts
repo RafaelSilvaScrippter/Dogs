@@ -3,6 +3,7 @@ import { Api } from "../../core/utils/abstract.ts";
 import { hashHmac, passwordHash } from "../../core/utils/password.ts";
 import { RouterError } from "../../core/utils/router-error.ts";
 import { queryGetLogin, queryPostUser } from "./query.ts";
+import { sessions } from "./session/service.ts";
 import { tableAuth } from "./tables.ts";
 
 export class AuthApi extends Api{
@@ -26,6 +27,10 @@ export class AuthApi extends Api{
             if(!getPasswordHash){
                 throw new RouterError(404,'usuário ou senha incorretos')
             }
+            
+            const cokie = await new sessions().createSession()
+
+            res.setHeader('Set-Cookie',cokie)
 
             const hash_password = getPasswordHash.password_hash;
             const isValid = await hashHmac(password,hash_password)
