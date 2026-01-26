@@ -1,11 +1,5 @@
 export  const postTable = /*SQL */ `
 
-    CREATE TABLE IF NOT EXISTS "users" (
-        "user_id" INTEGER NOT NULL,
-        "user_name" TEXT NOT NULL UNIQUE,
-        "email" TEXT NOT NULL UNIQUE,
-        "password_hash" TEXT NOT NULL
-    );
 
     CREATE TABLE IF NOT EXISTS "posts"
     (   "id" INTEGER PRIMARY KEY,

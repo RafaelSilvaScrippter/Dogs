@@ -3,6 +3,7 @@ import { Api } from "../../core/utils/abstract.ts";
 import { hashHmac, passwordHash } from "../../core/utils/password.ts";
 import { RouterError } from "../../core/utils/router-error.ts";
 import { queryGetLogin, queryPostUser } from "./query.ts";
+import { tableAuth } from "./tables.ts";
 
 export class AuthApi extends Api{
     handlers = {
@@ -38,7 +39,7 @@ export class AuthApi extends Api{
     }satisfies Api['handlers']
 
     tables(): void {
-        
+        this.db.db.exec(tableAuth)
     }
 
     routes(): void {
