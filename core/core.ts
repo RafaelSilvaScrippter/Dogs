@@ -21,18 +21,16 @@ export class Core{
         const res = customResponse(response)
         const handler = this.router.find(req.method || '',req.pathname)
         try{
-
-        
-        if(handler){
-            handler(req,res)
-        }else{
-            console.log('nenhuma rota encontrada')
-        }
+            if(handler){
+                await handler(req,res)
+             }else{
+                console.log('nenhuma rota encontrada')
+            }
         }catch(err){
-        if(err instanceof RouterError){
-            res.status(500).json({message:err.message})
+            if(err instanceof RouterError){
+                 res.status(err.status).json({message:err.message})
+            }
         }
-    }
     }
 
     init(){

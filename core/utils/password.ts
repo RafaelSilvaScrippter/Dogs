@@ -7,9 +7,9 @@ const SCRIPT_OPTIONS = {
 }
 const PEPPER = 'supersecreto';
 
-export class Password{
 
-    async passwordHash(password:string){
+
+    export async function passwordHash(password:string){
         const salt = randomBytes(16);
         const passwordHmac = createHmac('sha256',PEPPER).update(password).digest()
         const dk = await scryptSync(passwordHmac,salt,32,SCRIPT_OPTIONS)
@@ -17,7 +17,7 @@ export class Password{
         return `${salt.toString('hex')}$${dk.toString('hex')}`
     }
 
-    parsePasswordHash(password_hash: string) {
+    export function parsePasswordHash(password_hash: string) {
         const parts = password_hash.split("$");
         const [stored_salt_hex, stored_dk_hex] = parts;
         const stored_salt = Buffer.from(stored_salt_hex, "hex");
@@ -25,9 +25,9 @@ export class Password{
         return { stored_salt, stored_dk };
 }
 
-    async hashHmac(password:string,password_hash:string){
+    export async function hashHmac(password:string,password_hash:string){
 
-        const { stored_salt, stored_dk } = this.parsePasswordHash(password_hash);
+        const { stored_salt, stored_dk } = parsePasswordHash(password_hash);
 
         const password_normalized = password.normalize("NFC");
          const password_hmac = createHmac("sha256", PEPPER).update(password_normalized).digest();
@@ -39,11 +39,4 @@ export class Password{
         return timingSafeEqual(dk, stored_dk);
     }
 
-    async init(password:string){
-        const password_hashed = await this.passwordHash(password)
-        const valid =  await this.hashHmac(password,password_hashed)
-        return valid
-    }
     
-}
-console.log(await new Password().init('rafa'))
