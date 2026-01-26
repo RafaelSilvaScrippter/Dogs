@@ -1,12 +1,8 @@
 export class RouterError extends Error{
-    constructor(message:string){
+    status:number;
+    constructor(staus:number,message:string){
     super(message)
-        try{
-
-        }catch(erro){
-            if(erro instanceof RouterError){
-                console.log(erro.message)
-            }
-        }
+    this.status = staus
     }
+        
 }

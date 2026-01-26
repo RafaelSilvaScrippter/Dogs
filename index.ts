@@ -2,10 +2,12 @@
 import { readFile } from "node:fs/promises";
 import { ApiPosts } from "./api/posts/index.ts";
 import { Core } from "./core/core.ts";
+import { AuthApi } from "./api/auth/index.ts";
 
 const core  = new Core()
 
 new ApiPosts(core).init()
+new AuthApi(core).init()
 
 
 core.router.get('/',async (req,res) =>{
