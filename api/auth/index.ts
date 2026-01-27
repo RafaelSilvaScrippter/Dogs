@@ -2,7 +2,7 @@ import { logger } from "../../core/middleware/logger.ts";
 import { Api } from "../../core/utils/abstract.ts";
 
 import { RouterError } from "../../core/utils/router-error.ts";
-import { queryGetLogin, queryPostUser, selectSession } from "./query.ts";
+import { Queryes } from "./query.ts";
 import { sessions } from "./service/session.ts";
 import { tableAuth } from "./tables.ts";
 import {Password} from '../../core/utils/password.ts'
@@ -11,12 +11,14 @@ import { AuthMiddleware } from "./middleware/auth.ts";
 const pass = new Password()
 
 export class AuthApi extends Api{
+    queryes = new Queryes(this.core)
+  
     authGuard = new AuthMiddleware(this.core)
     handlers = {
         postUser:async(req,res) =>{
             const {username,email,password} = req.body
             const password_hash = await pass.hash(password)
-            const postUser = queryPostUser({user_name:username,email:email,password_hash:password_hash})
+            const postUser = this.queryes.queryPostUser({user_name:username,email:email,password_hash:password_hash})
     
             if(postUser?.changes === 0){
                 throw  new RouterError(400,'ocorreu um erro ao criar usuario')
@@ -28,7 +30,7 @@ export class AuthApi extends Api{
         },
         postLogin:async(req,res) =>{
             const {user_name,email,password} = req.body;
-            const getPasswordHash = queryGetLogin({user_name,email,password_hash:'teste'})
+            const getPasswordHash = this.queryes.queryGetLogin({user_name,email,password_hash:'teste'})
             if(!getPasswordHash){
                 throw new RouterError(404,'usuário ou senha incorretos')
             }
@@ -51,7 +53,7 @@ export class AuthApi extends Api{
             const session_hash = match ? match[1] : null;
         
 
-             const sessionUser = selectSession({session_hash})
+             const sessionUser = this.queryes.selectSession({session_hash})
             console.log(sessionUser)
             
             console.log(session_hash);
