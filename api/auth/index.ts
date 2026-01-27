@@ -1,16 +1,19 @@
 import { logger } from "../../core/middleware/logger.ts";
 import { Api } from "../../core/utils/abstract.ts";
-import { hashHmac, passwordHash } from "../../core/utils/password.ts";
+
 import { RouterError } from "../../core/utils/router-error.ts";
 import { queryGetLogin, queryPostUser, selectSession } from "./query.ts";
-import { sessions } from "./session/service.ts";
+import { sessions } from "./service/session.ts";
 import { tableAuth } from "./tables.ts";
+import {Password} from '../../core/utils/password.ts'
+
+const pass = new Password()
 
 export class AuthApi extends Api{
     handlers = {
         postUser:async(req,res) =>{
             const {username,email,password} = req.body
-            const password_hash = await passwordHash(password)
+            const password_hash = await pass.hash(password)
             const postUser = queryPostUser({user_name:username,email:email,password_hash:password_hash})
     
             if(postUser?.changes === 0){
@@ -33,7 +36,7 @@ export class AuthApi extends Api{
             res.setHeader('Set-Cookie',cokie)
 
             const hash_password = getPasswordHash.password_hash;
-            const isValid = await hashHmac(password,hash_password)
+            const isValid = await pass.valid(password,hash_password)
               if(!isValid){
                 throw new RouterError(404,'usuário ou senha incorretos')
             }
