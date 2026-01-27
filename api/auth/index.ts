@@ -6,10 +6,12 @@ import { queryGetLogin, queryPostUser, selectSession } from "./query.ts";
 import { sessions } from "./service/session.ts";
 import { tableAuth } from "./tables.ts";
 import {Password} from '../../core/utils/password.ts'
+import { AuthMiddleware } from "./middleware/auth.ts";
 
 const pass = new Password()
 
 export class AuthApi extends Api{
+    authGuard = new AuthMiddleware(this.core)
     handlers = {
         postUser:async(req,res) =>{
             const {username,email,password} = req.body
@@ -53,6 +55,12 @@ export class AuthApi extends Api{
             console.log(sessionUser)
             
             console.log(session_hash);
+        },
+        getTeste:(req,res) =>{
+            if(!req.session){
+                throw new RouterError(409,'erro de permissão')
+            }
+            res.status(200).json({message:'Usuário logado'})
         }
 
     }satisfies Api['handlers']
@@ -65,5 +73,6 @@ export class AuthApi extends Api{
         this.router.post('/auth/create',this.handlers.postUser)
         this.router.post('/auth/login',this.handlers.postLogin,[logger])
         this.router.get('/auth/session',this.handlers.getSession)
+        this.router.get('/auth/teste',this.handlers.getTeste,[this.authGuard.guard()])
     }
 }

@@ -21,6 +21,7 @@ export class Core{
         const req = await customRequest(request)
         const res = customResponse(response)
         const handler = this.router.find(req.method || '',req.pathname)
+        try{
 
         for (const middleware of this.router.middlewares){
             await middleware(req,res)
@@ -34,7 +35,6 @@ export class Core{
             }
         }
 
-        try{
             if(handler){
                 await handler.handler(req,res)
              }else{
