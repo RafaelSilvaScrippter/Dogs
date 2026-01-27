@@ -3,7 +3,8 @@ import { IncomingMessage } from "node:http";
 export interface CustomRequest extends IncomingMessage{
     pathname:string;
     query:URLSearchParams;
-    body:Record<string,any>
+    body:Record<string,any>;
+    session:{id:number,revoked:number} | null 
 }
 
 export async function customRequest(request:IncomingMessage){
@@ -11,7 +12,7 @@ export async function customRequest(request:IncomingMessage){
     const url = new URL(req.url || '','http://localhost')
     req.pathname = url.pathname;
     req.query = url.searchParams;
-
+    req.session = null
     const chunks: Array<Buffer> = []
     for await (const chunk of req){
         chunks.push(chunk)
