@@ -16,7 +16,7 @@ type Routes = {
     [method:string]:{
         [path:string]:{
             handler:Handler,
-            middleware?:Middleware[]
+            middleware:Middleware[]
         }
     }
 }

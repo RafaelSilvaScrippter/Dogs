@@ -16,9 +16,8 @@ export class AuthMiddleware extends CoreProvider{
             SELECT  * FROM "session"
             WHERE "session_hash" = ?
             
-        `).get(cookieParsed ?? '') as {id:number,revoked:number} | undefined
+        `).get(cookieParsed ?? '') as {id:number,revoked:number,password_hash:string} | undefined
         
-        console.log(sessionAcive)
 
         if(!sessionAcive){
             throw new RouterError(409,'sessão inválida')
