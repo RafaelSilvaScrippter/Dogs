@@ -27,6 +27,7 @@ export class Password{
     async valid(password:string,password_hash:string){
         const { stored_salt, stored_dk } = this.parse(password_hash);
     
+        console.log(password)
         const password_normalized = password.normalize("NFC");
         const password_hmac = createHmac("sha256", this.PEPPER).update(password_normalized).digest();
     

@@ -51,18 +51,40 @@ export class AuthApi extends Api{
             const cookie = req.headers['cookie'];
             const match = cookie?.match(/__Secure_sid=([^;\s]+)/);
             const session_hash = match ? match[1] : null;
-        
 
-             const sessionUser = this.queryes.selectSession({session_hash})
-            console.log(sessionUser)
+            const sessionUser = this.queryes.selectSession({session_hash})
             
-            console.log(session_hash);
+            res.status(200).json({title:'usuário autenticado'})
         },
-        getTeste:(req,res) =>{
+        updatePassword:async(req,res) =>{
+            const {email,password,new_password} = req.body
+            console.log(email,password,new_password)
             if(!req.session){
-                throw new RouterError(409,'erro de permissão')
+                throw new RouterError(409,'Usuário não autenticado')
             }
-            res.status(200).json({message:'Usuário logado'})
+
+            const selectUser = this.queryes.selectUser('user_id',req.session.id)
+            if(!selectUser){
+                throw new RouterError(404,'usuário não encontrado')
+            }
+            
+            
+            
+            
+            const verifiPassword = await pass.valid(password,selectUser?.password_hash)
+            
+            console.log(verifiPassword)
+            if(!verifiPassword){
+                throw new RouterError(404,'senha incorreta')
+            }
+            const hashearPassword = await pass.hash(new_password)
+            const updatePassword = this.queryes.updatePassword({user_id:req.session.id,password_hash:hashearPassword})
+            
+            if(updatePassword.changes === 0){
+                throw new RouterError(400,'erro ao atualizar senha')
+            }
+            
+            res.status(200).json({message:'senha atualizada'})
         }
 
     }satisfies Api['handlers']
@@ -75,6 +97,6 @@ export class AuthApi extends Api{
         this.router.post('/auth/create',this.handlers.postUser)
         this.router.post('/auth/login',this.handlers.postLogin,[logger])
         this.router.get('/auth/session',this.handlers.getSession)
-        this.router.get('/auth/teste',this.handlers.getTeste,[this.authGuard.guard()])
+        this.router.put('/auth/update/password',this.handlers.updatePassword,[this.authGuard.guard()])
     }
 }

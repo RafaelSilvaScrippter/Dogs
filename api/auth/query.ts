@@ -28,6 +28,16 @@ interface UserSessionSelect {
 
 type userSessionSelect = Omit<UserSessionSelect,"id" | "ip" | "revoked">
 
+
+interface UpdataData {
+    user_id:number;
+    user_name:string;
+    email:string;
+    password_hash:string;
+}
+
+type updateData = Omit<UpdataData,"user_name" | "email" >
+
  export class Queryes extends CoreProvider{
      
     queryPostUser({user_name,email,password_hash}:userData){
@@ -69,4 +79,24 @@ type userSessionSelect = Omit<UserSessionSelect,"id" | "ip" | "revoked">
         
     `).get(session_hash) as userSessionSelect | undefined
     }
+
+    selectUser(key:string,value:number | string){
+        return this.db.db.prepare(/*SQL */ `
+        
+            SELECT * FROM "users" 
+            WHERE ${key} = ?
+            
+        `).get(value) as {password_hash:string} | undefined
+    }
+    updatePassword({user_id,password_hash:new_password}:updateData){
+
+        return this.db.db.prepare(/*SQL */ `
+        
+            UPDATE "users" SET "password_hash" = ?
+            WHERE "user_id" = ?
+            
+        `).run(new_password,user_id)
+
+    }
+
 }

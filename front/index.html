@@ -12,12 +12,12 @@
 <script>
     async function loginUser(){
 
-        const response = await fetch('http://localhost:3000/auth/login',{
-            method:'POST',
+        const response = await fetch('http://localhost:3000/auth/update/password',{
+            method:"PUT",
             headers:{
                 'Content-Type': 'application/json'
             },
-            body:JSON.stringify({user_name:'theKiddie',email:'rafael',password:'rafael'})
+             body:JSON.stringify({email:'ana@origamid.com',password:'123',new_password:'123'})
         })
         const dados = await response.json()
         console.log(dados)
