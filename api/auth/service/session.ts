@@ -17,4 +17,8 @@ export class sessions   {
         return `__Secure_sid=${sid} Path=/; Max-Age=90000; HttpOnly; Secure; SameSite=Lax`
     }
 
+    revokedAll({user_id}:{user_id:number}){
+        const revoked = this.queryes.revokedSession({user_id:user_id})
+    }
+
 }

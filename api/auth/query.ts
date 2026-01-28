@@ -38,6 +38,8 @@ interface UpdataData {
 
 type updateData = Omit<UpdataData,"user_name" | "email" >
 
+type revokedSession = Omit<UpdataData, "user_name" | "email" | "password_hash">
+
  export class Queryes extends CoreProvider{
      
     queryPostUser({user_name,email,password_hash}:userData){
@@ -97,6 +99,14 @@ type updateData = Omit<UpdataData,"user_name" | "email" >
             
         `).run(new_password,user_id)
 
+    }
+    revokedSession({user_id}:revokedSession){
+        return this.db.db.prepare(/*SQL */`
+        
+            UPDATE "session" SET "revoked" = ?
+            WHERE "id" = ?
+            
+        `).run(1,user_id)
     }
 
 }
