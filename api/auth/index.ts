@@ -68,12 +68,8 @@ export class AuthApi extends Api{
                 throw new RouterError(404,'usuário não encontrado')
             }
             
-            
-            
-            
             const verifiPassword = await pass.valid(password,selectUser?.password_hash)
             
-            console.log(verifiPassword)
             if(!verifiPassword){
                 throw new RouterError(404,'senha incorreta')
             }
@@ -84,7 +80,14 @@ export class AuthApi extends Api{
                 throw new RouterError(400,'erro ao atualizar senha')
             }
             
+            const sessionRevokedAll = new sessions().revokedAll({user_id:req.session.id})
+
+            console.log({sessionRevokedAll})
             res.status(200).json({message:'senha atualizada'})
+        },
+        postLogout:(req,res) =>{
+
+
         }
 
     }satisfies Api['handlers']
