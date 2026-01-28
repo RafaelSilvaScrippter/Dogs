@@ -29,15 +29,19 @@ export class AuthApi extends Api{
             }
         },
         postLogin:async(req,res) =>{
-            const {user_name,email,password} = req.body;
-            const getPasswordHash = this.queryes.queryGetLogin({user_name,email,password_hash:'teste'})
+            const {email,password} = req.body;
+
+            const getPasswordHash = this.queryes.queryGetLogin({email})
             if(!getPasswordHash){
                 throw new RouterError(404,'usuário ou senha incorretos')
             }
             
             const cokie = await new sessions().createSession()
 
+
+
             res.setHeader('Set-Cookie',cokie)
+         
 
             const hash_password = getPasswordHash.password_hash;
             const isValid = await pass.valid(password,hash_password)
@@ -58,7 +62,7 @@ export class AuthApi extends Api{
         },
         updatePassword:async(req,res) =>{
             const {email,password,new_password} = req.body
-            console.log(email,password,new_password)
+
             if(!req.session){
                 throw new RouterError(409,'Usuário não autenticado')
             }
@@ -82,11 +86,36 @@ export class AuthApi extends Api{
             
             const sessionRevokedAll = new sessions().revokedAll({user_id:req.session.id})
 
-            console.log({sessionRevokedAll})
             res.status(200).json({message:'senha atualizada'})
         },
-        postLogout:(req,res) =>{
+        postLogout:async(req,res) =>{
+            const {email} = req.body;
+            const user = this.queryes.selectUser('email',email)
+            if(!user){
+                throw new RouterError(404,'usuário não encontrado')
+            }
 
+            if(user.user_id !== req.session?.id){
+                throw new RouterError(400,'erro ao fazer logout')
+            }
+
+               const cookie = req.headers.cookie
+            const match = cookie?.match(/__Secure_sid=([^;\s]+)/);
+            const session_hash = match ? match[1] : null;
+            const selectSession = this.queryes.selectSession({session_hash})
+
+
+            if(selectSession?.session_hash !== selectSession?.session_hash){
+                throw new RouterError(400,'erro ao revogar a sessão')
+            }
+
+            const revokedSession = this.queryes.revokedSessionActual({session_hash})
+            
+            if(revokedSession.changes === 0){
+                throw new RouterError(400,'erro ao revogar a sessão')
+            }
+
+            res.status(201).json({title:"sessão revogada"})
 
         }
 
@@ -100,6 +129,7 @@ export class AuthApi extends Api{
         this.router.post('/auth/create',this.handlers.postUser)
         this.router.post('/auth/login',this.handlers.postLogin,[logger])
         this.router.get('/auth/session',this.handlers.getSession)
+        this.router.post('/auth/logout',this.handlers.postLogout,[this.authGuard.guard()])
         this.router.put('/auth/update/password',this.handlers.updatePassword,[this.authGuard.guard()])
     }
 }

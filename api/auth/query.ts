@@ -26,6 +26,8 @@ interface UserSessionSelect {
     revoked:number;
 }
 
+type getUser = Omit<UserData, 'id' | "password_hash" | "user_name" >
+
 type userSessionSelect = Omit<UserSessionSelect,"id" | "ip" | "revoked">
 
 
@@ -53,10 +55,10 @@ type revokedSession = Omit<UpdataData, "user_name" | "email" | "password_hash">
      `).run(user_name,email,password_hash)
     }
 
-    queryGetLogin({user_name,email,password_hash}:userData){
+    queryGetLogin({email}:getUser){
         return this.db.db.prepare(/*SQL */ `
-            SELECT "password_hash" FROM "users" WHERE "user_name" = ? OR "email" = ?
-        `).get(user_name,email) as userData | undefined
+            SELECT "password_hash" FROM "users" WHERE  "email" = ?
+        `).get(email) as userData | undefined
     }
 
     insertQuery({id,ip,session_hash}:UserSession){
@@ -88,7 +90,7 @@ type revokedSession = Omit<UpdataData, "user_name" | "email" | "password_hash">
             SELECT * FROM "users" 
             WHERE ${key} = ?
             
-        `).get(value) as {password_hash:string} | undefined
+        `).get(value) as {password_hash:string,user_id:number} | undefined
     }
     updatePassword({user_id,password_hash:new_password}:updateData){
 
@@ -107,6 +109,14 @@ type revokedSession = Omit<UpdataData, "user_name" | "email" | "password_hash">
             WHERE "id" = ?
             
         `).run(1,user_id)
+    }
+    revokedSessionActual({session_hash}:{session_hash:string | null}){
+        return this.db.db.prepare(/*SQL */`
+        
+            UPDATE "session" SET "revoked" = 1
+            WHERE "session_hash" = ?
+            
+        `).run(session_hash)
     }
 
 }

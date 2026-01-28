@@ -12,17 +12,33 @@
 <script>
     async function loginUser(){
 
-        const response = await fetch('http://localhost:3000/auth/update/password',{
-            method:"PUT",
+        const response = await fetch('http://localhost:3000/auth/login',{
+            method:"POST",
             headers:{
                 'Content-Type': 'application/json'
             },
-             body:JSON.stringify({email:'ana@origamid.com',password:'123',new_password:'123'})
+             body:JSON.stringify({email:'rafael',password:'123',new_password:'123'})
         })
         const dados = await response.json()
         console.log(dados)
     }
 
-   
+
+
+        async function LogoutloginUser(){
+            
+           const response = await fetch('http://localhost:3000/auth/logout',{
+            method:"POST",
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({email:'rafael'})
+        })
+        const dados = await response.json()
+        console.log(dados)
+    }
+
+LogoutloginUser()
+
 </script>
 </html>

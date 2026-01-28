@@ -18,10 +18,10 @@ export class Core{
     }
 
     handler = async (request:IncomingMessage,response:ServerResponse) =>{
-        try{
         const req = await customRequest(request)
         const res = customResponse(response)
         const handler = this.router.find(req.method || '',req.pathname)
+        try{
 
         for (const middleware of this.router.middlewares){
             await middleware(req,res)
@@ -42,11 +42,10 @@ export class Core{
             }
         }catch(err){
             if(err instanceof RouterError){
-                 response.statusCode = err.status 
-                response.end(err.message)
-            }else
-               console.log(err)
-            
+                 res.status(err.status).json({message:err.message})
+            }else{
+                console.log(err)
+            }
         }
     }
 
