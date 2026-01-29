@@ -55,10 +55,10 @@ type revokedSession = Omit<UpdataData, "user_name" | "email" | "password_hash">
      `).run(user_name,email,password_hash)
     }
 
-    queryGetLogin({email}:getUser){
+    queryGetLogin({email}:{email:string}){
         return this.db.db.prepare(/*SQL */ `
-            SELECT "password_hash" FROM "users" WHERE  "email" = ?
-        `).get(email) as userData | undefined
+            SELECT "password_hash","email","user_id" FROM "users" WHERE  "email" = ?
+        `).get(email) as {email:string,password_hash:string,user_id:number} | undefined
     }
 
     insertQuery({id,ip,session_hash}:UserSession){
@@ -117,6 +117,34 @@ type revokedSession = Omit<UpdataData, "user_name" | "email" | "password_hash">
             WHERE "session_hash" = ?
             
         `).run(session_hash)
+    }
+
+    insertResets({token_hash,user_id}:{token_hash:string,user_id:number}){
+        return this.db.db.prepare(/*SQL */ `
+        
+            INSERT OR IGNORE INTO "resets" 
+            
+            ("token_hash","user_id")
+            VALUES
+            (?,?)
+            
+        `).run(token_hash,user_id)
+    }
+    selectResets({token_hash}:{token_hash:string}){
+        return this.db.db.prepare(/*SQL */ `
+    
+            SELECT * FROM "resets"
+            WHERE "token_hash" = ?
+            
+        `).get(token_hash) as {token_hash:string,user_id:number}
+    }
+    deleteResets({user_id}:{user_id:number}){
+        return this.db.db.prepare(/*SQL */`
+        
+            DELETE FROM "resets"
+            WHERE "user_id" = ?
+            
+        `).run(user_id)
     }
 
 }
