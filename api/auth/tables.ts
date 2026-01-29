@@ -14,6 +14,12 @@ export const tableAuth = /*SQL */ `
         "session_hash" TEXT NOT NULL,
         "revoked"  INTEGER NOT NULL DEFAULT 0 CHECK("revoked" IN (0,1)),
         FOREIGN KEY ("id") REFERENCES "users"("user_id")
+    );
+
+    CREATE TABLE IF NOT EXISTS "resets" (
+        "token_hash" TEXT NOT NULL,
+        "user_id" INTEGER NOT NULL,
+        FOREIGN KEY ("user_id") REFERENCES "users"
     )
 
 `

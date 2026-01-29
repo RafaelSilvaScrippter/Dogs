@@ -7,6 +7,8 @@ import { sessions } from "./service/session.ts";
 import { tableAuth } from "./tables.ts";
 import {Password} from '../../core/utils/password.ts'
 import { AuthMiddleware } from "./middleware/auth.ts";
+import { randomBytes } from "node:crypto";
+import { promisify } from "node:util";
 
 const pass = new Password()
 
@@ -117,6 +119,49 @@ export class AuthApi extends Api{
 
             res.status(201).json({title:"sessão revogada"})
 
+        },
+        postPassForgot:async(req,res) =>{
+            const {email} = req.body
+            const promisifyAsync = promisify(randomBytes);
+            const token_hash = (await promisifyAsync(32)).toString('base64url')
+            const selectUser = this.queryes.queryGetLogin({email});
+            if(!selectUser){
+                throw new RouterError(404,'usuário não encontrado')
+            }
+            const insertResets = this.queryes.insertResets({token_hash,user_id:selectUser.user_id})
+            if(insertResets.changes === 0){
+                throw new RouterError(400,'erro ao enviar dados')
+            }
+            
+            const message = {
+                to:selectUser.email,
+                token:token_hash
+            }
+
+            res.status(200).json({message})
+            
+        },
+        postPassReset:async (req,res) =>{
+            const {token,new_password} = req.body;
+
+            const selectResets = this.queryes.selectResets({token_hash:token})
+            if(token !== selectResets.token_hash){
+                throw new RouterError(400,'token inválido')
+            }
+
+            const validatePassword =await  pass.hash(new_password)
+            const newPassword = this.queryes.updatePassword({user_id:selectResets.user_id,password_hash:validatePassword})
+
+            if(newPassword.changes === 0){
+                throw new RouterError(400,'erro ao atualizar a senha')
+            }
+
+            const revokedSession = this.queryes.deleteResets({user_id:selectResets.user_id})
+            if(revokedSession.changes === 0){
+                throw new RouterError(400,'erro ao revogar a sessão')
+            }
+
+            res.status(201).json({title:'senha atualizada com sucesso'})
         }
 
     }satisfies Api['handlers']
@@ -129,6 +174,8 @@ export class AuthApi extends Api{
         this.router.post('/auth/create',this.handlers.postUser)
         this.router.post('/auth/login',this.handlers.postLogin,[logger])
         this.router.get('/auth/session',this.handlers.getSession)
+        this.router.post('/auth/password/forgot',this.handlers.postPassForgot)
+        this.router.post('/auth/password/reset',this.handlers.postPassReset)
         this.router.post('/auth/logout',this.handlers.postLogout,[this.authGuard.guard()])
         this.router.put('/auth/update/password',this.handlers.updatePassword,[this.authGuard.guard()])
     }

@@ -7,6 +7,7 @@
 </head>
 <body>
 <h1>Dogs</h1>
+
 </body>
 
 <script>
@@ -38,7 +39,35 @@
         console.log(dados)
     }
 
-LogoutloginUser()
+
+        async function forgot(){
+            
+           const response = await fetch('http://localhost:3000/auth/password/forgot',{
+            method:"POST",
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({email:'rafael'})
+        })
+        const dados = await response.json()
+        console.log(dados)
+    }
+
+      async function resetToken(){
+            
+           const response = await fetch('http://localhost:3000/auth/password/reset',{
+            method:"POST",
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({token:'4-g3DPCM0VzWJtYT4ZiInyPmza80ImPr12sbnjd8U9M',new_password:'123'})
+        })
+        const dados = await response.json()
+        console.log(dados)
+    }
+
+    resetToken()
+
 
 </script>
 </html>
