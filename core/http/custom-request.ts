@@ -4,12 +4,14 @@ export interface CustomRequest extends IncomingMessage{
     pathname:string;
     query:URLSearchParams;
     body:Record<string,any>;
+    params:Record<string,any>;
     session:{id:number,revoked:number} | null 
 }
 
 export async function customRequest(request:IncomingMessage){
     const req = request as CustomRequest;
     const url = new URL(req.url || '','http://localhost')
+    req.params = {}
     req.pathname = url.pathname;
     req.query = url.searchParams;
     req.session = null

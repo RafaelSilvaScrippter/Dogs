@@ -15,8 +15,8 @@ export type Middleware = (
 type Routes = {
     [method:string]:{
         [path:string]:{
-            handler:Handler,
-            middleware:Middleware[]
+            handler:Handler;
+            middlewares:Middleware[];
         }
     }
 }
@@ -32,25 +32,53 @@ export class Router{
     middlewares:Middleware[] =[]
 
 
-    get(route:string,handler:Handler,middleware:Middleware[] =[]){
-        this.routes['GET'][route] = {handler,middleware};
+    get(route:string,handler:Handler,middlewares:Middleware[] =[]){
+        this.routes['GET'][route] = {handler,middlewares};
     }
-    post(route:string,handler:Handler,middleware:Middleware[] = []){
-        this.routes['POST'][route] = {handler,middleware};
+    post(route:string,handler:Handler,middlewares:Middleware[] = []){
+        this.routes['POST'][route] = {handler,middlewares};
     }
-    put(route:string,handler:Handler,middleware:Middleware[] = []){
-        this.routes['PUT'][route] ={handler,middleware};
+    put(route:string,handler:Handler,middlewares:Middleware[] = []){
+        this.routes['PUT'][route] ={handler,middlewares};
     }
-    delete(route:string,handler:Handler,middleware:Middleware[] = []){
-        this.routes['DELETE'][route] = {handler,middleware};
+    delete(route:string,handler:Handler,middlewares:Middleware[] = []){
+        this.routes['DELETE'][route] = {handler,middlewares};
     }
 
     use(middleware:Middleware[]){
         this.middlewares.push(...middleware)
     }
 
-    find(method:string,route:string){
+    find(method:string,pathname:string){
+        const routerByMethod = this.routes[method]
+        if(!routerByMethod) return null
+        const matchedRoute = routerByMethod[pathname]
+       if(matchedRoute)  return {route:matchedRoute,params:{}}
+      const reqParts = pathname.split('/').filter(Boolean)
+       for(const route of Object.keys(routerByMethod)){
+        if(!route.includes(":")) continue;
+        const routeParts = route.split('/').filter(Boolean);
+        if(routeParts.length !== reqParts.length) continue
+        if(routeParts[0] !== reqParts[0] ) continue
 
-        return this.routes[method]?.[route] || null;
+        const params: Record<string,any>= {}
+        let ok = true
+        for(let i = 0;i < reqParts.length;i++){
+            const segment = routeParts[i]
+            const value = reqParts[i]
+            if(segment.startsWith(':')){
+                params[segment.slice(1)] = value
+            }else if(segment !== value){
+                ok = false
+                break
+            }
+        }
+        if(ok){
+           return {route: routerByMethod[route],params}
+        }
+
+       }
+
+        return null
     }
 }

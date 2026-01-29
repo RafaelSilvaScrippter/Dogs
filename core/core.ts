@@ -20,26 +20,30 @@ export class Core{
     handler = async (request:IncomingMessage,response:ServerResponse) =>{
         const req = await customRequest(request)
         const res = customResponse(response)
-        const handler = this.router.find(req.method || '',req.pathname)
+        const matched = this.router.find(req.method || '',req.pathname)
+
+        if(!matched){
+          return  console.log('rota não encontrada')
+        }
+
         try{
 
         for (const middleware of this.router.middlewares){
             await middleware(req,res)
         }
-        const routes = handler
+        const {route,params} =matched;
+        req.params = params
+        if(route?.middlewares instanceof Array){
         
-        if(routes?.middleware){
-        
-            for(const middleware of routes?.middleware){
+            for(const middleware of route.middlewares){
                 await middleware(req,res)
             }
         }
 
-            if(handler){
-                await handler.handler(req,res)
-             }else{
-                console.log('nenhuma rota encontrada')
-            }
+        if(typeof route.handler === 'function'){
+            route.handler(req,res)
+        }
+
         }catch(err){
             if(err instanceof RouterError){
                  res.status(err.status).json({message:err.message})
