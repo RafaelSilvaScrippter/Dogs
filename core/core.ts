@@ -39,10 +39,8 @@ export class Core{
                 await middleware(req,res)
             }
         }
-
-        if(typeof route.handler === 'function'){
-            route.handler(req,res)
-        }
+        await route.handler(req,res)
+        
 
         }catch(err){
             if(err instanceof RouterError){

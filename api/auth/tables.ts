@@ -11,6 +11,8 @@ export const tableAuth = /*SQL */ `
     CREATE TABLE IF NOT EXISTS "session" (
         "id" INTEGER NOT NULL,
         "ip" TEXT NOT NULL,
+        "ua" TEXT NOT NULL,
+        "expires" TEXT NOT NULL,
         "session_hash" TEXT NOT NULL,
         "revoked"  INTEGER NOT NULL DEFAULT 0 CHECK("revoked" IN (0,1)),
         FOREIGN KEY ("id") REFERENCES "users"("user_id")

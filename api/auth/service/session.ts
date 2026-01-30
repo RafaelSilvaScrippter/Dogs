@@ -10,11 +10,11 @@ export class sessions   {
     core = new Core()
     queryes = new Queryes(this.core);
 
-    async createSession(){
+    async createSession(user_id:number,ip:string,ua:string,now:number){
         const randomBytesAsync = promisify(randomBytes);
         const sid = ((await randomBytesAsync(32)).toString('base64'))
-        this.queryes.insertQuery({id:1,ip:'127.0.0.1',session_hash:sid})
-        return `__Secure_sid=${sid} Path=/; Max-Age=90000; HttpOnly; Secure; SameSite=Lax`
+        this.queryes.insertSession({id:user_id,ip:ip,session_hash:sid,ua:ua,expires_ms:now})
+        return `__Secure_sid=${sid} Path=/; Max-Age=${now}; HttpOnly; Secure; SameSite=Lax`
     }
 
     revokedAll({user_id}:{user_id:number}){

@@ -16,13 +16,17 @@ interface UserSession  {
     id:number;
     ip:string;
     session_hash:string;
+    ua:string;
+    expires_ms:number;
     revoked?:number;
 }
 
 interface UserSessionSelect {
     id:number;
     ip:string;
-    session_hash:string | null;
+    ua:string;
+    expires:number;
+    session_hash:string;
     revoked:number;
 }
 
@@ -61,21 +65,23 @@ type revokedSession = Omit<UpdataData, "user_name" | "email" | "password_hash">
         `).get(email) as {email:string,password_hash:string,user_id:number} | undefined
     }
 
-    insertQuery({id,ip,session_hash}:UserSession){
+    insertSession({id,ip,ua,expires_ms,session_hash}:UserSession){
         return this.db.db.prepare(/*SQL */ `
         
         INSERT OR IGNORE INTO "session" (
             "id",
             "ip",
+            "ua",
+            "expires",
             "session_hash"
         )
 
-        VALUES (?,?,?)
+        VALUES (?,?,?,?,?)
         
-        `).run(id,ip,session_hash)
+        `).run(id,ip,ua,Math.floor(expires_ms / 1000),session_hash)
     }
     
-    selectSession({session_hash}:userSessionSelect){
+    selectSession({session_hash}:{session_hash:string}){
         return this.db.db.prepare(/*SQL */ `
             
         SELECT * FROM "session"
