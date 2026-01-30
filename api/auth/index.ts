@@ -33,19 +33,20 @@ export class AuthApi extends Api{
         postLogin:async(req,res) =>{
             const {email,password} = req.body;
 
-            const getPasswordHash = this.queryes.queryGetLogin({email})
-            if(!getPasswordHash){
+            const getUser = this.queryes.queryGetLogin({email})
+            if(!getUser){
                 throw new RouterError(404,'usuário ou senha incorretos')
             }
+            const expires_ms = Date.now() + 60 * 60 * 15
             
-            const cokie = await new sessions().createSession()
+            const cokie = await new sessions().createSession(getUser.user_id,req.ip || '127.0.0.',req.headers['user-agent'] || '' ,expires_ms)
 
 
 
             res.setHeader('Set-Cookie',cokie)
          
 
-            const hash_password = getPasswordHash.password_hash;
+            const hash_password = getUser.password_hash;
             const isValid = await pass.valid(password,hash_password)
               if(!isValid){
                 throw new RouterError(404,'usuário ou senha incorretos')
@@ -58,8 +59,21 @@ export class AuthApi extends Api{
             const match = cookie?.match(/__Secure_sid=([^;\s]+)/);
             const session_hash = match ? match[1] : null;
 
-            const sessionUser = this.queryes.selectSession({session_hash})
             
+            const sessionUser = this.queryes.selectSession({session_hash:session_hash ? session_hash : ''})
+            const now = Date.now()
+
+            if(!sessionUser){
+                throw new RouterError(400,'nenhuma sessão ativa')
+            }
+
+            if(now >= sessionUser?.expires){
+                if(req.session){
+
+                    this.queryes.revokedSession({user_id:req.session?.id})
+                }
+            }
+
             res.status(200).json({title:'usuário autenticado'})
         },
         updatePassword:async(req,res) =>{
@@ -104,7 +118,7 @@ export class AuthApi extends Api{
                const cookie = req.headers.cookie
             const match = cookie?.match(/__Secure_sid=([^;\s]+)/);
             const session_hash = match ? match[1] : null;
-            const selectSession = this.queryes.selectSession({session_hash})
+            const selectSession = this.queryes.selectSession({session_hash:session_hash ? session_hash : ''})
 
 
             if(selectSession?.session_hash !== selectSession?.session_hash){
@@ -143,12 +157,21 @@ export class AuthApi extends Api{
         },
         postPassReset:async (req,res) =>{
             const {token,new_password} = req.body;
-
+            
+            
+            if(!token){
+                throw new RouterError(404,'token inválido')
+            }
             const selectResets = this.queryes.selectResets({token_hash:token})
-            if(token !== selectResets.token_hash){
+            
+            
+            if(selectResets && token !== selectResets.token_hash){
                 throw new RouterError(400,'token inválido')
             }
-
+            if(!selectResets){
+                throw new RouterError(404,'usuário não existe')
+            }
+            
             const validatePassword =await  pass.hash(new_password)
             const newPassword = this.queryes.updatePassword({user_id:selectResets.user_id,password_hash:validatePassword})
 

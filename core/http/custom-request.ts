@@ -5,6 +5,7 @@ export interface CustomRequest extends IncomingMessage{
     query:URLSearchParams;
     body:Record<string,any>;
     params:Record<string,any>;
+    ip:string | undefined;
     session:{id:number,revoked:number} | null 
 }
 
@@ -15,6 +16,7 @@ export async function customRequest(request:IncomingMessage){
     req.pathname = url.pathname;
     req.query = url.searchParams;
     req.session = null
+    req.ip = req.socket.remoteAddress
     const chunks: Array<Buffer> = []
     for await (const chunk of req){
         chunks.push(chunk)
