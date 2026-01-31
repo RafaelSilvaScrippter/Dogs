@@ -7,6 +7,13 @@
   </head>
   <body>
     <h1>Dogs</h1>
+
+
+    <form id="enviar">
+      <input type="file" name="img">
+      <button>enviar</button>
+    </form>
+
   </body>
 
   <script>
@@ -25,11 +32,35 @@
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: "rafael" }),
+        body: JSON.stringify({ email: "rafael@gmail.com",password:"123" }),
       });
       const dados = await response.json();
       console.log(dados);
     }
+
+    const formFile = document.querySelector('#enviar')
+    const inputFile = formFile.querySelector('input')
+
+    formFile.addEventListener("submit",async(e) =>{
+      e.preventDefault()
+      for(const file of inputFile.files){
+        console.log(file)
+        const response = await fetch("http://localhost:3000/upload/file", {
+        method: "POST",       
+        credentials:"include", 
+        headers: {
+           "Content-Type": "application/octet-stream",
+          
+          'x-filename': file.name
+        },
+        body: file
+      });
+      const dados = await response.json();
+      console.log(dados);
+    }
+    
+  })
+
 
     async function forgot() {
       const response = await fetch(
