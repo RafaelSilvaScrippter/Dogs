@@ -33,12 +33,13 @@ export class Core{
         }
         const {route,params} =matched;
         req.params = params
-        if(route?.middlewares instanceof Array){
-        
-            for(const middleware of route.middlewares){
+
+
+
+        for(const middleware of route.middlewares){
                 await middleware(req,res)
-            }
         }
+        
         await route.handler(req,res)
         
 
