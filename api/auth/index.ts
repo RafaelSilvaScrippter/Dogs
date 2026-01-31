@@ -115,7 +115,7 @@ export class AuthApi extends Api{
                 throw new RouterError(400,'erro ao fazer logout')
             }
 
-               const cookie = req.headers.cookie
+            const cookie = req.headers.cookie
             const match = cookie?.match(/__Secure_sid=([^;\s]+)/);
             const session_hash = match ? match[1] : null;
             const selectSession = this.queryes.selectSession({session_hash:session_hash ? session_hash : ''})

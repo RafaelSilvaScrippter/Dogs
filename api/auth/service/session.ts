@@ -14,7 +14,7 @@ export class sessions   {
         const randomBytesAsync = promisify(randomBytes);
         const sid = ((await randomBytesAsync(32)).toString('base64'))
         this.queryes.insertSession({id:user_id,ip:ip,session_hash:sid,ua:ua,expires_ms:now})
-        return `__Secure_sid=${sid} Path=/; Max-Age=${now}; HttpOnly; Secure; SameSite=Lax`
+        return `__Secure_sid=${sid}; Path=/; Max-Age=${now}; HttpOnly; Secure; SameSite=Lax`
     }
 
     revokedAll({user_id}:{user_id:number}){

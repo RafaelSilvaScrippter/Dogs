@@ -27,16 +27,26 @@
 
     loginUser()
     async function LogoutloginUser() {
-      const response = await fetch("http://localhost:3000/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch("http://localhost:3000/teste")
+
+      const dados = await response.json();
+      console.log('teste',dados);
+    }
+    LogoutloginUser()
+
+     async function login() {
+      const response = await fetch("http://localhost:3000/auth/login",{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
         },
-        body: JSON.stringify({ email: "rafael@gmail.com",password:"123" }),
-      });
+        body:JSON.stringify({email:"rafael@gmail.com",password:'123'})
+      })
+
       const dados = await response.json();
       console.log(dados);
     }
+    login()
 
     const formFile = document.querySelector('#enviar')
     const inputFile = formFile.querySelector('input')
@@ -47,15 +57,12 @@
         console.log(file)
         const response = await fetch("http://localhost:3000/upload/file", {
         method: "POST",       
-        credentials:"include", 
-        headers: {
-           "Content-Type": "application/octet-stream",
-          
-          'x-filename': file.name
+        headers:{
+          'Content-Type':'application/octet-stream'
         },
         body: file
       });
-      const dados = await response.json();
+      const dados = await response.text();
       console.log(dados);
     }
     
