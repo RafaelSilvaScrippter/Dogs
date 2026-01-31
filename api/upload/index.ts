@@ -12,8 +12,11 @@ export class UploadApi extends Api{
     authGuard = new AuthMiddleware(this.core)
 
     handlers = {
+        teste:async(req,res) =>{
+            console.log(req.headers.cookie)
+            res.status(200).json({title:'ok'})
+        },
         uploadFile:async (req,res) =>{
-            console.log(req.headers)
             const name = req.headers['x-filename'] as string;
 
 
@@ -43,6 +46,7 @@ export class UploadApi extends Api{
 
 
     routes(): void {
-        this.router.post('/upload/file',this.handlers.uploadFile,[this.authGuard.guard()])
+        this.router.get('/teste',this.handlers.teste,[this.authGuard.guard()])
+        this.router.post('/upload/file',this.handlers.uploadFile)
     }
 }
