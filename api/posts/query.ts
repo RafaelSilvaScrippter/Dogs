@@ -38,12 +38,22 @@ export class Queryes extends CoreProvider{
         return this.db.db.prepare(/*SQL */ `
         
             SELECT * FROM "posts"
-            LEFT JOIN "comments"
-            ON "posts"."user_id" = "comments"."comment_user"
-            WHERE "posts"."user_id" = ?
+            WHERE "id" = ?
             
-        `).get(id) as {views:number}
+        `).get(id) as {views:number} | undefined
     }
+
+    selectComments({id}:{id:number}){
+        return this.db.db.prepare(/*SQL */ `
+            
+        SELECT "comments"."comment","users"."user_name" FROM "comments"
+        INNER JOIN "users"
+        ON "users"."user_id" = "comments"."comment_post"
+        WHERE "comment_post" = ?
+            
+        `).all(id)
+    }
+
     updateViews({views, id}:{views:number,id:number}){
         return this.db.db.prepare(/*SQL */ `
         
@@ -51,5 +61,14 @@ export class Queryes extends CoreProvider{
             WHERE "id" = ?
             
         `).run(views,id)
+    }
+    insertComment({comment,comment_user,commet_post}:{comment:string,comment_user:number,commet_post:number}){
+        return this.db.db.prepare(/*SQL */ `
+        
+            INSERT OR IGNORE INTO "comments"
+            ("comment","comment_user","comment_post") VALUES
+            (?,?,?)
+            
+        `).run(comment,comment_user,commet_post)
     }
 }

@@ -15,7 +15,9 @@ export  const postTable = /*SQL */ `
     CREATE TABLE IF NOT EXISTS "comments"
     (   "id" INTEGER PRIMARY KEY,
         "comment" TEXT NOT NULL,
+        "comment_post" INTEGER NOT NULL,
         "comment_user" INTEGER NOT NULL,
+         FOREIGN KEY ("comment_post") REFERENCES "users"("user_id") ON DELETE CASCADE,
         FOREIGN KEY ("comment_user") REFERENCES "posts"("id") ON DELETE CASCADE
     );
 

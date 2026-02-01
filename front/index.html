@@ -97,6 +97,24 @@
       const dados = await response.json();
       console.log(dados);
     }
+ async function postComment() {
+      const response = await fetch(
+        "http://localhost:3000/post/comments/1",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ comment: "testando bem" }),
+        },
+      );
+      const dados = await response.json();
+      console.log(dados);
+    }
+
+    setTimeout(() =>{
+      postComment()
+    },1000)
 
     async function resetToken() {
       const response = await fetch(
