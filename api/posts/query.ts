@@ -26,4 +26,12 @@ export class Queryes extends CoreProvider{
             
         `).run(nome,src,user_id,peso,idade)
     }
+    selectPhotos(){
+        return this.db.db.prepare(/*SQL */ `
+            
+        
+            SELECT "id","nome","peso","src","idade","views" FROM "posts"
+            
+        `).all()
+    }
 }
