@@ -41,7 +41,7 @@ export class UploadApi extends Api{
             try{
                 await pipeline(req,LimitBites(MAX_BYTE),writeStream)
                 await rename(tempPath,writePath)
-                res.status(201).json({title:'arquivo postado'})
+                res.status(201).json({title:'arquivo postado',src:writePath})
             }catch(error){
                 console.log(error)
                 writeStream.end()
