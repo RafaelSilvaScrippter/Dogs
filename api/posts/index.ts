@@ -49,8 +49,30 @@ export class ApiPosts extends Api{
             count++
             const updateViews = this.query.updateViews({views:count,id})
 
-            res.status(200).json(post)
+            const comments = this.query.selectComments({id})
 
+            res.status(200).json({post,comentarios:comments})
+
+        },
+        postComment:(req,res) =>{
+            const {comment} = req.body
+            const {id} = req.params
+            const post = this.query.selectPhoto({id})
+            if(!post){
+                throw new RouterError(404,'nenhuma publicação')
+            }
+
+            if(!req.session?.id){
+                throw new RouterError(401,'usuário não autorizado')
+            }
+
+            const insertComment = this.query.insertComment({comment,comment_user:req.session.id,commet_post:id})
+            
+            if(insertComment.changes === 0){
+                throw new RouterError(400,'erro ao comentar')
+            }
+
+            res.status(201).json({title:'comentário adicionado'})
         }
 
     }satisfies Api['handlers']
@@ -62,6 +84,7 @@ export class ApiPosts extends Api{
     routes(): void {
         this.router.get('/get/photo/:id',this.handlers.getFoto)
         this.router.get('/get/photos',this.handlers.getFotos)
+        this.router.post('/post/comments/:id',this.handlers.postComment,[this.authGuard.guard()])
         this.router.post('/post/publicacao',this.handlers.postPublicacao,[this.authGuard.guard()])
     }
     
