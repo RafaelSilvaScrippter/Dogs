@@ -42,6 +42,14 @@ export class Queryes extends CoreProvider{
             ON "posts"."user_id" = "comments"."comment_user"
             WHERE "posts"."user_id" = ?
             
-        `).get(id)
+        `).get(id) as {views:number}
+    }
+    updateViews({views, id}:{views:number,id:number}){
+        return this.db.db.prepare(/*SQL */ `
+        
+            UPDATE "posts" SET "views" = ?
+            WHERE "id" = ?
+            
+        `).run(views,id)
     }
 }

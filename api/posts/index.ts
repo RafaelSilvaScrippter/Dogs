@@ -43,6 +43,11 @@ export class ApiPosts extends Api{
             if(!post){
                 throw new RouterError(404,'nenhuma publicação')
             }
+            
+
+            let count = post.views;
+            count++
+            const updateViews = this.query.updateViews({views:count,id})
 
             res.status(200).json(post)
 
