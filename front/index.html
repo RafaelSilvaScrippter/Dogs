@@ -55,7 +55,7 @@
       e.preventDefault()
       for(const file of inputFile.files){
         console.log(file)
-        const response = await fetch("http://localhost:3000/upload/file", {
+        const response1 = await fetch("http://localhost:3000/upload/file", {
         method: "POST",       
         headers:{
           'Content-Type':'application/octet-stream',
@@ -63,8 +63,21 @@
         },
         body: file
       });
-      const dados = await response.text();
-      console.log(dados);
+      const dados1 =  await response1.json()
+      console.log(dados1)
+     async function postPubli(){
+         const response = await fetch("http://localhost:3000/post/publicacao",{
+          method:"POST",
+          headers:{
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify({nome:"Abby",idade:20,peso:40,src:dados1.src})
+         })
+
+         const dados = await response.json();
+         console.log(dados);
+         }
+      postPubli()
     }
     
   })
