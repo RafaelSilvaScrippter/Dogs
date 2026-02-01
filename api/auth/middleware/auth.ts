@@ -4,7 +4,6 @@ import { RouterError } from "../../../core/utils/router-error.ts";
 
 export class AuthMiddleware extends CoreProvider{
     guard = ():Middleware   =>  async (req,res) =>{
-        console.log(req.headers.cookie)
         const cookieExist = req.headers.cookie?.replace('__Secure_sid=','');
         const indexOfNum = cookieExist?.indexOf('=')
         const cookieParsed = cookieExist?.slice(0,indexOfNum ? indexOfNum + 1 : 0)

@@ -6,19 +6,26 @@ import { randomUUID } from "node:crypto";
 import { pipeline } from "node:stream/promises";
 import { rename, rm } from "node:fs/promises";
 import path from "node:path";
+import { LimitBites } from "./utils.ts";
 
+const MAX_BYTE = 150 * 1024 * 1024
 export class UploadApi extends Api{
     
     authGuard = new AuthMiddleware(this.core)
 
     handlers = {
-        teste:async(req,res) =>{
-            console.log(req.headers.cookie)
-            res.status(200).json({title:'ok'})
-        },
         uploadFile:async (req,res) =>{
             const name = req.headers['x-filename'] as string;
 
+            const contentLength = Number(req.headers['content-length'])
+
+            if(!Number.isInteger(contentLength)){
+                throw new RouterError(400,'content-length inválido')
+            }
+
+            if(contentLength > MAX_BYTE){
+                throw new RouterError(413,'corpo grande')
+            }
 
             if(req.headers['content-type'] !== 'application/octet-stream'){
                 throw new RouterError(400,'use octet-stream')
@@ -32,7 +39,7 @@ export class UploadApi extends Api{
             const writeStream = createWriteStream(tempPath,{flags:'wx'})
 
             try{
-                await pipeline(req,writeStream)
+                await pipeline(req,LimitBites(MAX_BYTE),writeStream)
                 await rename(tempPath,writePath)
                 res.status(201).json({title:'arquivo postado'})
             }catch(error){
@@ -46,7 +53,6 @@ export class UploadApi extends Api{
 
 
     routes(): void {
-        this.router.get('/teste',this.handlers.teste,[this.authGuard.guard()])
-        this.router.post('/upload/file',this.handlers.uploadFile)
+        this.router.post('/upload/file',this.handlers.uploadFile,[this.authGuard.guard()])
     }
 }
