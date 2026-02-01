@@ -26,6 +26,16 @@ export class ApiPosts extends Api{
            }
 
            res.status(201).json({title:"publicação feita"})
+        },
+        getFotos:(req,res) =>{
+
+            const posts = this.query.selectPhotos()
+            if(posts.length === 0){
+                throw new RouterError(404,'nenhuma publicação')
+            }
+
+            res.status(200).json({posts})
+
         }
 
     }satisfies Api['handlers']
@@ -35,6 +45,7 @@ export class ApiPosts extends Api{
     }
 
     routes(): void {
+        this.router.get('/get/photos',this.handlers.getFotos)
         this.router.post('/post/publicacao',this.handlers.postPublicacao,[this.authGuard.guard()])
     }
     
