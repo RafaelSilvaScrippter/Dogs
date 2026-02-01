@@ -34,4 +34,14 @@ export class Queryes extends CoreProvider{
             
         `).all()
     }
+    selectPhoto({id}:{id:number}){
+        return this.db.db.prepare(/*SQL */ `
+        
+            SELECT * FROM "posts"
+            LEFT JOIN "comments"
+            ON "posts"."user_id" = "comments"."comment_user"
+            WHERE "posts"."user_id" = ?
+            
+        `).get(id)
+    }
 }
