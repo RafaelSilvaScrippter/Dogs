@@ -58,7 +58,8 @@
         const response = await fetch("http://localhost:3000/upload/file", {
         method: "POST",       
         headers:{
-          'Content-Type':'application/octet-stream'
+          'Content-Type':'application/octet-stream',
+          'x-filename':file.name
         },
         body: file
       });
