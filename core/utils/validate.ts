@@ -1,4 +1,4 @@
-import { RouterError } from "./router-error";
+import { RouterError } from "./router-error.ts";
 
 function string(x:unknown):string | undefined{
     if(typeof x !== 'string' || x === '' || x.trim().length === 0) return undefined;

@@ -81,7 +81,18 @@ export class ApiPosts extends Api{
             }
 
             res.status(201).json({title:'comentário adicionado'})
+        },
+        getPhotsUser:(req,res) =>{
+            const {user} = req.params
+            const postsUser = this.query.selectPhotoUser(user)
+
+            if(postsUser.length === 0){
+                throw new RouterError(404,'nenhuma publicação encontrada')
+            }
+
+            res.status(200).json(postsUser)
         }
+        
 
     }satisfies Api['handlers']
 
@@ -91,6 +102,7 @@ export class ApiPosts extends Api{
 
     routes(): void {
         this.router.get('/get/photo/:id',this.handlers.getFoto)
+        this.router.get('/get/photos/:user',this.handlers.getPhotsUser)
         this.router.get('/get/photos',this.handlers.getFotos)
         this.router.post('/post/comments/:id',this.handlers.postComment,[this.authGuard.guard()])
         this.router.post('/post/publicacao',this.handlers.postPublicacao,[this.authGuard.guard()])

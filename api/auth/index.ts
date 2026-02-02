@@ -115,7 +115,6 @@ export class AuthApi extends Api{
 
             res.status(200).json({message:'senha atualizada'})
         },
-        // AQUI IREI CORRIGIR A FALHA DE SEGURANÇA
         postLogout:async(req,res) =>{
             const {email} = req.body;
             const user = this.queryes.selectUser('email',email)
