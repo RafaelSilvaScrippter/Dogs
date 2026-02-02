@@ -10,12 +10,13 @@ import { AuthMiddleware } from "./middleware/auth.ts";
 import { randomBytes } from "node:crypto";
 import { promisify } from "node:util";
 import {v} from '../../core/utils/validate.ts'
+import { rateLimit } from "../../core/middleware/rate-limit.ts";
 
 const pass = new Password()
 
 export class AuthApi extends Api{
     queryes = new Queryes(this.core)
-  
+    rateLimit =  rateLimit
     authGuard = new AuthMiddleware(this.core)
     handlers = {
         postUser:async(req,res) =>{
@@ -210,12 +211,12 @@ export class AuthApi extends Api{
     }
 
     routes(): void {
-        this.router.post('/auth/create',this.handlers.postUser)
-        this.router.post('/auth/login',this.handlers.postLogin,[logger])
+        this.router.post('/auth/create',this.handlers.postUser,[this.rateLimit(3000,5)])
+        this.router.post('/auth/login',this.handlers.postLogin,[logger,this.rateLimit(3000,4)])
         this.router.get('/auth/session',this.handlers.getSession)
-        this.router.post('/auth/password/forgot',this.handlers.postPassForgot)
-        this.router.post('/auth/password/reset',this.handlers.postPassReset)
+        this.router.post('/auth/password/forgot',this.handlers.postPassForgot,[this.rateLimit(3000,8)])
+        this.router.post('/auth/password/reset',this.handlers.postPassReset,[this.rateLimit(3000,8)])
         this.router.post('/auth/logout',this.handlers.postLogout,[this.authGuard.guard()])
-        this.router.put('/auth/update/password',this.handlers.updatePassword,[this.authGuard.guard()])
+        this.router.put('/auth/update/password',this.handlers.updatePassword,[this.authGuard.guard(),this.rateLimit(3000,8)])
     }
 }
