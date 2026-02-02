@@ -9,6 +9,7 @@ import {Password} from '../../core/utils/password.ts'
 import { AuthMiddleware } from "./middleware/auth.ts";
 import { randomBytes } from "node:crypto";
 import { promisify } from "node:util";
+import {v} from '../../core/utils/validate.ts'
 
 const pass = new Password()
 
@@ -18,7 +19,11 @@ export class AuthApi extends Api{
     authGuard = new AuthMiddleware(this.core)
     handlers = {
         postUser:async(req,res) =>{
-            const {username,email,password} = req.body
+            const {username,email,password}  = {
+                username:v.string(req.body.user_name),
+                email:v.email(req.body.email),
+                password:v.password(req.body.password)
+            }
             const password_hash = await pass.hash(password)
             const postUser = this.queryes.queryPostUser({user_name:username,email:email,password_hash:password_hash})
     
@@ -31,7 +36,10 @@ export class AuthApi extends Api{
             }
         },
         postLogin:async(req,res) =>{
-            const {email,password} = req.body;
+            const {email,password}  = {
+                email:v.email(req.body.email),
+                password:v.password(req.body.password)
+            }
 
             const getUser = this.queryes.queryGetLogin({email})
             if(!getUser){
@@ -59,7 +67,6 @@ export class AuthApi extends Api{
             const match = cookie?.match(/__Secure_sid=([^;\s]+)/);
             const session_hash = match ? match[1] : null;
 
-            
             const sessionUser = this.queryes.selectSession({session_hash:session_hash ? session_hash : ''})
             const now = Date.now()
 
@@ -77,7 +84,11 @@ export class AuthApi extends Api{
             res.status(200).json({title:'usuário autenticado'})
         },
         updatePassword:async(req,res) =>{
-            const {email,password,new_password} = req.body
+            const {email,password,new_password} = {
+                email:v.email(req.body.email),
+                password:v.password(req.body.password),
+                new_password:v.password(req.body.password)
+            }
 
             if(!req.session){
                 throw new RouterError(409,'Usuário não autenticado')
@@ -104,6 +115,7 @@ export class AuthApi extends Api{
 
             res.status(200).json({message:'senha atualizada'})
         },
+        // AQUI IREI CORRIGIR A FALHA DE SEGURANÇA
         postLogout:async(req,res) =>{
             const {email} = req.body;
             const user = this.queryes.selectUser('email',email)
@@ -135,7 +147,9 @@ export class AuthApi extends Api{
 
         },
         postPassForgot:async(req,res) =>{
-            const {email} = req.body
+            const {email} = {
+                email:v.email(req.body.email)
+            }
             const promisifyAsync = promisify(randomBytes);
             const token_hash = (await promisifyAsync(32)).toString('base64url')
             const selectUser = this.queryes.queryGetLogin({email});
@@ -156,7 +170,10 @@ export class AuthApi extends Api{
             
         },
         postPassReset:async (req,res) =>{
-            const {token,new_password} = req.body;
+            const {token,new_password} = {
+                new_password:v.password(req.body.new_password),
+                token:req.body.token
+            }
             
             
             if(!token){

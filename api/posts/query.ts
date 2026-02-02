@@ -5,8 +5,8 @@ interface PostData {
     nome:string;
     user_id:number;
     src:string;
-    peso:number;
-    idade:number;
+    peso:string;
+    idade:string;
     views:number;
 }
 
