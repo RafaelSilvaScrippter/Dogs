@@ -1,5 +1,6 @@
 import { Api } from "../../core/utils/abstract.ts";
 import { RouterError } from "../../core/utils/router-error.ts";
+import { v } from "../../core/utils/validate.ts";
 import { AuthMiddleware } from "../auth/middleware/auth.ts";
 import { Queryes } from "./query.ts";
 import { postTable } from "./tables.ts";
@@ -13,7 +14,12 @@ export class ApiPosts extends Api{
     handlers = {
 
         postPublicacao:(req,res) =>{
-            const {nome,idade,peso,src} = req.body
+            const {nome,idade,peso,src} = {
+                nome:v.string(req.body.nome),
+                idade:v.string(req.body.idade),
+                peso:v.string(req.body.peso),
+                src:req.body.src
+            }
 
             if(!req.session?.id){
                 throw new RouterError(401,'usuário não está logado')
@@ -55,7 +61,9 @@ export class ApiPosts extends Api{
 
         },
         postComment:(req,res) =>{
-            const {comment} = req.body
+            const {comment} = {
+                comment:v.string(req.body.comment)
+            }
             const {id} = req.params
             const post = this.query.selectPhoto({id})
             if(!post){
