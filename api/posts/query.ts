@@ -71,4 +71,12 @@ export class Queryes extends CoreProvider{
             
         `).run(comment,comment_user,commet_post)
     }
+    selectPhotoUser(username:string){
+        return this.db.db.prepare(/*SQL */ `
+        
+            SELECT * FROM "posts"
+            WHERE "user_id" = (SELECT "user_id" FROM "users" WHERE "user_name"  = ?)
+            
+        `).all(username)
+    }
 }
