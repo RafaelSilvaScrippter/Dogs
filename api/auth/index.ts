@@ -46,7 +46,7 @@ export class AuthApi extends Api{
             if(!getUser){
                 throw new RouterError(404,'usuário ou senha incorretos')
             }
-            const expires_ms = Date.now() + 60 * 60 * 15
+            const expires_ms = Date.now() + 15 * 24 * 60 * 60 * 1000
             
             const cokie = await new sessions().createSession(getUser.user_id,req.ip || '127.0.0.',req.headers['user-agent'] || '' ,expires_ms)
 
