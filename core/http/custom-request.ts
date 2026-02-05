@@ -18,7 +18,14 @@ export async function customRequest(request:IncomingMessage){
     req.session = null
     req.ip = req.socket.remoteAddress
     const chunks: Array<Buffer> = []
-    for await (const chunk of req){
+ 
+
+    if(req.headers["content-type"] === 'application/octet-stream'){
+      req.body = {}
+      return req
+    }
+
+       for await (const chunk of req){
         chunks.push(chunk)
     }
 
