@@ -18,16 +18,25 @@
 
   <script>
     async function loginUser() {
-      const response = await fetch("http://localhost:3000/auth/session", {
-        method: "GET",
+      const response = await fetch("http://localhost:3000/auth/login", {
+        method: "POST",
+        headers:{
+          'Content-Type':"application/json"
+        },
+        body:JSON.stringify({email:"rafa@gmail.com",password:'rafa'})
       });
       const dados = await response.json();
       console.log(dados)
     }
 
-    loginUser()
     async function LogoutloginUser() {
-      const response = await fetch("http://localhost:3000/teste")
+      const response = await fetch("http://localhost:3000/auth/create",{
+        method:'POST',
+        headers:{
+          'Content-Type': 'application/json'
+        },
+        body:JSON.stringify({user_name:"theRafa",email:"rafa@gmail.com",password:'rafa'})
+      })
 
       const dados = await response.json();
       console.log('teste',dados);
@@ -69,13 +78,13 @@
           headers:{
             'Content-Type':'application/json'
           },
-          body:JSON.stringify({nome:"Abby",idade:20,peso:40,src:dados1.src})
+          body:JSON.stringify({nome:"Ellie",idade:'14',peso:'15',src:dados1.src})
          })
 
          const dados = await response.json();
          console.log(dados);
          }
-      postPubli()
+         postPubli()
     }
     
   })
@@ -95,7 +104,7 @@
       const dados = await response.json();
       console.log(dados);
     }
- async function postComment() {
+    async function postComment() {
       const response = await fetch(
         "http://localhost:3000/post/comments/1",
         {
