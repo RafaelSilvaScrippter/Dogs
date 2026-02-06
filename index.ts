@@ -16,8 +16,7 @@ db.config()
 core.router.use([rateLimit(3000,15)])
 
 core.router.get('/',async (req,res) =>{
-    const file = await readFile('./front/index.html','utf-8')
-    res.end(file)
+    res.end('hello world')
 })
 new ApiPosts(core).init()
 new AuthApi(core).init()

@@ -5,6 +5,7 @@ import { customResponse } from "./http/custom-response.ts";
 import { DataBase } from "./database.ts";
 import { RouterError } from "./utils/router-error.ts";
 import { logger } from "./middleware/logger.ts";
+const PORT = process.env.PORT || 3000
 
 export class Core{
     router:Router;
@@ -53,7 +54,7 @@ export class Core{
     }
 
     init(){
-        this.server.listen(3000,() =>{
+        this.server.listen({port:PORT,host:'0.0.0.0'},() =>{
             console.log('servidor rodando em http://localhost:3000')
         })
     }
