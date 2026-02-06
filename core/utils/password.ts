@@ -6,6 +6,7 @@ const SCRIPT_OPTIONS = {
     p:1
 }
 
+
 export class Password{
     PEPPER = 'supersecreto';
 
