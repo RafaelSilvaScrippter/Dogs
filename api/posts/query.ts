@@ -37,7 +37,8 @@ export class Queryes extends CoreProvider{
     selectPhoto({id}:{id:number}){
         return this.db.db.prepare(/*SQL */ `
         
-            SELECT * FROM "posts"
+            SELECT "posts".*,"users"."user_name" FROM "posts" JOIN "users" ON
+            "users"."user_id" = "posts"."user_id"
             WHERE "id" = ?
             
         `).get(id) as {views:number} | undefined
