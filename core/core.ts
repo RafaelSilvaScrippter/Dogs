@@ -57,7 +57,7 @@ export class Core{
     }
 
     init(){
-        this.server.listen({port:3000,host:'0.0.0.0'},() =>{
+        this.server.listen({port:process.env.PORT,host:'0.0.0.0'},() =>{
             console.log('servidor rodando em http://localhost:3000')
         })
     }
