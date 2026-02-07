@@ -21,7 +21,7 @@ export class Core{
     handler = async (request:IncomingMessage,response:ServerResponse) =>{
         const req = await customRequest(request)
         const res = customResponse(response)
-            res.setHeader('Access-Control-Allow-Origin', 'https://dogs-srwx.onrender.com');
+            res.setHeader('Access-Control-Allow-Origin', 'https://dogs-srwx.onrender.coma');
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
             res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         const matched = this.router.find(req.method || '',req.pathname)
