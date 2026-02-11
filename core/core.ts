@@ -30,7 +30,7 @@ export class Core{
         const matched = this.router.find(req.method || '',req.pathname)
 
         if(!matched){
-          throw new RouterError(404,'rota não encontrada')
+          return console.log('rota não encontrada')
         }
 
 
