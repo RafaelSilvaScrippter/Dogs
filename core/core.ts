@@ -5,7 +5,6 @@ import { customResponse } from "./http/custom-response.ts";
 import { DataBase } from "./database.ts";
 import { RouterError } from "./utils/router-error.ts";
 import { logger } from "./middleware/logger.ts";
-const PORT = process.env.PORT || 3000
 
 export class Core{
     router:Router;
@@ -27,13 +26,13 @@ export class Core{
             if(req.method === 'OPTIONS'){
                 return res.status(204).end()
             }
+        try{
         const matched = this.router.find(req.method || '',req.pathname)
 
         if(!matched){
           throw new RouterError(404,'rota não encontrada')
         }
 
-        try{
 
         for (const middleware of this.router.middlewares){
             await middleware(req,res)
