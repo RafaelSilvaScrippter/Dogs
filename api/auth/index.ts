@@ -48,19 +48,20 @@ export class AuthApi extends Api{
             }
             const expires_ms = Date.now() + 15 * 24 * 60 * 60 * 1000
             
-            const cokie = await new sessions().createSession(getUser.user_id,req.ip || '127.0.0.',req.headers['user-agent'] || '' ,expires_ms)
-
-
-
-            res.setHeader('Set-Cookie',cokie)
-         
-
+            
+            
+            
+            
+            
             const hash_password = getUser.password_hash;
             const isValid = await pass.valid(password,hash_password)
-              if(!isValid){
+            if(!isValid){
                 throw new RouterError(404,'usuário ou senha incorretos')
             }
 
+            const cokie = await new sessions().createSession(getUser.user_id,req.ip || '127.0.0.',req.headers['user-agent'] || '' ,expires_ms)
+            res.setHeader('Set-Cookie',cokie)
+            
             res.status(200).json({message:'usuário autenticado'})
         },
         getSession:(req,res) =>{
@@ -86,6 +87,7 @@ export class AuthApi extends Api{
         },
         updatePassword:async(req,res) =>{
             const {email,password,new_password} = {
+                
                 email:v.email(req.body.email),
                 password:v.password(req.body.password),
                 new_password:v.password(req.body.password)
