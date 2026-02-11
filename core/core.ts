@@ -30,7 +30,7 @@ export class Core{
         const matched = this.router.find(req.method || '',req.pathname)
 
         if(!matched){
-          return  console.log('rota não encontrada')
+          throw new RouterError(404,'rota não encontrada')
         }
 
         try{
@@ -60,7 +60,8 @@ export class Core{
     }
 
     init(){
-        this.server.listen({port:process.env.PORT,host:'0.0.0.0'},() =>{
+        const PORT = Number(process.env.PORT) || 3000 
+        this.server.listen(PORT,'0.0.0.0',() =>{
             console.log('servidor rodando em http://localhost:3000')
         })
     }
