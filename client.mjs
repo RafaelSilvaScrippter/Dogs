@@ -6,7 +6,7 @@ const response2 = await fetch(URL + 'auth/login',{
     headers:{
         'Content-Type': 'application/json'
     },
-    body:JSON.stringify({email:'rafa@gmail.com',password:'rafa'})
+    body:JSON.stringify({email:'rafa@gmail.com',password:'rfa'})
 })
 const dados2 = await response2.json()
 console.log(dados2)

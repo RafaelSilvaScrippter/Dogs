@@ -56,6 +56,7 @@ export class AuthApi extends Api{
             const hash_password = getUser.password_hash;
             const isValid = await pass.valid(password,hash_password)
             if(!isValid){
+                res.status(404)
                 throw new RouterError(404,'usuário ou senha incorretos')
             }
 
