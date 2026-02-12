@@ -21,6 +21,7 @@ export class Core{
         const req = await customRequest(request)
         const res = customResponse(response)
             res.setHeader('Access-Control-Allow-Origin', '*');
+              res.setHeader("Access-Control-Allow-Credentials", "true");
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
             res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
             if(req.method === 'OPTIONS'){
