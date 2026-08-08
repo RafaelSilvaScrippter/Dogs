@@ -57,6 +57,7 @@ export class ApiPosts extends Api{
 
             const comments = this.query.selectComments({id})
 
+            console.log(post)
             res.status(200).json({post,comentarios:comments})
 
         },

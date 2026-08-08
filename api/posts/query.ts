@@ -50,7 +50,7 @@ export class Queryes extends CoreProvider{
         SELECT "comments"."comment","users"."user_name" FROM "comments"
         INNER JOIN "users"
         ON "users"."user_id" = "comments"."comment_post"
-        WHERE "comments"."comment_user" = ?
+        WHERE "comment_post" = ?
             
         `).all(id)
     }
