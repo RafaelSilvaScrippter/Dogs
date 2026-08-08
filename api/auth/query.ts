@@ -32,7 +32,7 @@ interface UserSessionSelect {
 
 type getUser = Omit<UserData, 'id' | "password_hash" | "user_name" >
 
-type userSessionSelect = Omit<UserSessionSelect,"id" | "ip" | "revoked">
+type userSessionSelect = Omit<UserSessionSelect,"ip">
 
 
 interface UpdataData {
@@ -96,7 +96,7 @@ type revokedSession = Omit<UpdataData, "user_name" | "email" | "password_hash">
             SELECT * FROM "users" 
             WHERE ${key} = ?
             
-        `).get(value) as {password_hash:string,user_id:number} | undefined
+        `).get(value) as {password_hash:string,user_id:number,email:string,user_name:string} | undefined
     }
     updatePassword({user_id,password_hash:new_password}:updateData){
 

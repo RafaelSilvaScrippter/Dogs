@@ -14,8 +14,9 @@
 async function session(){
 
     const response = await fetch('http://localhost:3000/auth/session')
+    
     const dados = await response.json()
-    console.log(dados)
+    console.log({dados})
 }
 async function postUser(){
 
@@ -30,7 +31,7 @@ async function postUser(){
     console.log(dados)
 }
 
- postUser()
+//  postUser()
 
 session()
 

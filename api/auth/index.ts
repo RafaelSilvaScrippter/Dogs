@@ -75,18 +75,24 @@ export class AuthApi extends Api{
             const sessionUser = this.queryes.selectSession({session_hash:session_hash ? session_hash : ''})
             const now = Date.now()
 
-            if(!sessionUser){
+
+
+
+            if(sessionUser?.revoked === 1){
                 throw new RouterError(400,'nenhuma sessão ativa')
             }
 
-            if(now >= sessionUser?.expires){
+            if( sessionUser && now >= sessionUser?.expires){
                 if(req.session){
 
                     this.queryes.revokedSession({user_id:req.session?.id})
                 }
             }
 
-            res.status(200).json({title:'usuário autenticado'})
+            const selectUser = this.queryes.selectUser('user_id',sessionUser ? sessionUser?.id : '')
+
+            if(!selectUser) throw new RouterError(404,'Usuário não encontrado')
+            res.status(200).json({title:'usuário está logado',username:selectUser.user_name})
         },
         updatePassword:async(req,res) =>{
             const {email,password,new_password} = {
@@ -217,7 +223,7 @@ export class AuthApi extends Api{
 
     routes(): void {
         this.router.post('/auth/create',this.handlers.postUser,[this.rateLimit(3000,5)])
-        this.router.post('/auth/login',this.handlers.postLogin,[logger,this.rateLimit(3000,4)])
+        this.router.post('/auth/login',this.handlers.postLogin,[this.rateLimit(3000,4)])
         this.router.get('/auth/session',this.handlers.getSession)
         this.router.post('/auth/password/forgot',this.handlers.postPassForgot,[this.rateLimit(3000,8)])
         this.router.post('/auth/password/reset',this.handlers.postPassReset,[this.rateLimit(3000,8)])
