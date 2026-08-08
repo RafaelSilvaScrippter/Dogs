@@ -1,10 +1,12 @@
 {
   "dependencies": {
-    "@types/node": "^25.0.10",
     "dotenv": "^17.2.4"
   },
   "scripts": {
     "start": "node index.ts"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^26.2.0"
+  }
 }
