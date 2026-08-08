@@ -37,10 +37,12 @@ export class AuthApi extends Api{
             }
         },
         postLogin:async(req,res) =>{
+            console.log(req.body.email)
             const {email,password}  = {
                 email:v.email(req.body.email),
                 password:v.password(req.body.password)
             }
+
 
             const getUser = this.queryes.queryGetLogin({email})
             if(!getUser){

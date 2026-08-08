@@ -67,7 +67,7 @@ export class Queryes extends CoreProvider{
         return this.db.db.prepare(/*SQL */ `
         
             INSERT OR IGNORE INTO "comments"
-            ("comment","comment_user","comment_post") VALUES
+            ("comment","comment_post","comment_user") VALUES
             (?,?,?)
             
         `).run(comment,comment_user,commet_post)

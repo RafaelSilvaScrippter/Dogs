@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Hello teste</h1>
+
+
+    <script>
+
+async function session(){
+
+    const response = await fetch('http://localhost:3000/auth/session')
+    const dados = await response.json()
+    console.log(dados)
+}
+async function postUser(){
+
+    const response = await fetch('http://localhost:3000/auth/login',{
+        method:'POST',
+        headers:{
+            'Content-Type':"application/json"
+        },
+        body:JSON.stringify({email:"rafa@gmail.com",password:'rafa'})
+    })
+    const dados = await response.json()
+    console.log(dados)
+}
+
+ postUser()
+
+session()
+
+    </script>
+</body>
+</html>
