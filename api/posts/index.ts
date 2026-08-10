@@ -24,7 +24,8 @@ export class ApiPosts extends Api{
             if(!req.session?.id){
                 throw new RouterError(401,'usuário não está logado')
             }
-
+            console.log(typeof src)
+            console.log('src',src)
             const replaceSrc = src.replace('files/','')
             const insertPost = this.query.insertPost({nome,src:replaceSrc,user_id:req.session?.id,peso,idade})
            if(insertPost.changes === 0){
