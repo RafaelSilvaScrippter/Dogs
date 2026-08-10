@@ -20,18 +20,18 @@ async function session(){
 }
 async function postUser(){
 
-    const response = await fetch('http://localhost:3000/auth/login',{
+    const response = await fetch('http://localhost:3000/post/publicacao',{
         method:'POST',
         headers:{
             'Content-Type':"application/json"
         },
-        body:JSON.stringify({email:"rafa@gmail.com",password:'rafa'})
+        body:JSON.stringify({nome:"apollo",idade:'2',peso:'4',src:`c:/Users/Rafa/Desktop/Área de Trabalho/foto.png`})
     })
     const dados = await response.json()
     console.log(dados)
 }
 
-//  postUser()
+ postUser()
 
 session()
 
