@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -18,23 +18,39 @@ async function session(){
     const dados = await response.json()
     console.log({dados})
 }
-async function postUser(){
+async function login(){
 
-    const response = await fetch('http://localhost:3000/post/publicacao',{
+    const response = await fetch('http://localhost:3000/auth/login',{
         method:'POST',
         headers:{
             'Content-Type':"application/json"
         },
-        body:JSON.stringify({nome:"apollo",idade:'2',peso:'4',src:`c:/Users/Rafa/Desktop/Área de Trabalho/foto.png`})
+        body:JSON.stringify({email:"rafa@gmail.com",password:"rafa"})
+    })
+    
+    const dados = await response.json()
+    console.log({dados})
+}
+async function postUser(){
+
+    const response = await fetch('http://localhost:3000/auth/logout',{
+        method:'DELETE',
+        // headers:{
+        //     'Content-Type':"application/json"
+        // },
+        // body:JSON.stringify({nome:"apollo",idade:'2',peso:'4',src:`c:/Users/Rafa/Desktop/Área de Trabalho/foto.png`})
     })
     const dados = await response.json()
     console.log(dados)
 }
 
- postUser()
+// login()
 
-session()
+// session()
+postUser()
+
+
 
     </script>
 </body>
-</html>
+</html> -->

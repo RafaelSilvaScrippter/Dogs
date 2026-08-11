@@ -128,14 +128,9 @@ export class AuthApi extends Api{
             res.status(200).json({message:'senha atualizada'})
         },
         postLogout:async(req,res) =>{
-            const {email} = req.body;
-            const user = this.queryes.selectUser('email',email)
-            if(!user){
-                throw new RouterError(404,'usuário não encontrado')
-            }
-
-            if(user.user_id !== req.session?.id){
-                throw new RouterError(400,'erro ao fazer logout')
+          
+            if(!req.session?.id){
+                throw new RouterError(404,'Nenhuma sessão encontrada')
             }
 
             const cookie = req.headers.cookie
@@ -227,7 +222,7 @@ export class AuthApi extends Api{
         this.router.get('/auth/session',this.handlers.getSession)
         this.router.post('/auth/password/forgot',this.handlers.postPassForgot,[this.rateLimit(3000,8)])
         this.router.post('/auth/password/reset',this.handlers.postPassReset,[this.rateLimit(3000,8)])
-        this.router.post('/auth/logout',this.handlers.postLogout,[this.authGuard.guard()])
+        this.router.delete('/auth/logout',this.handlers.postLogout,[this.authGuard.guard()])
         this.router.put('/auth/update/password',this.handlers.updatePassword,[this.authGuard.guard(),this.rateLimit(3000,8)])
     }
 }
